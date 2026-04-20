@@ -16,6 +16,8 @@ export default {
       },
       animation: {
         marquee: 'marquee 30s linear infinite',
+        glitch: 'glitch-shadow 7s infinite',
+        'glitch-delay': 'glitch-shadow 7s 1.2s infinite',
       },
       keyframes: {
         marquee: {

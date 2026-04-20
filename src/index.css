@@ -67,3 +67,37 @@ canvas {
   touch-action: none;
   outline: none;
 }
+
+/* Role carousel slide-up */
+@keyframes slide-up-in {
+  from { transform: translateY(110%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes slide-down-out {
+  from { transform: translateY(0);    opacity: 1; }
+  to   { transform: translateY(-110%); opacity: 0; }
+}
+.role-enter { animation: slide-up-in 0.35s cubic-bezier(0.16,1,0.3,1) forwards; }
+.role-exit  { animation: slide-down-out 0.3s ease-in forwards; }
+
+/* Glitch text-shadow animation */
+@keyframes glitch-shadow {
+  0%, 88%, 100% { text-shadow: none; }
+  89% { text-shadow: -4px  1px 0 rgba(0,229,255,0.95),  4px -1px 0 rgba(255,46,196,0.95); }
+  90% { text-shadow:  4px -2px 0 rgba(0,229,255,0.95), -4px  2px 0 rgba(255,46,196,0.95); }
+  91% { text-shadow: -3px  3px 0 rgba(0,229,255,0.95),  3px -3px 0 rgba(255,46,196,0.95); }
+  92% { text-shadow:  2px -1px 0 rgba(0,229,255,0.7),  -2px  1px 0 rgba(255,46,196,0.7); }
+  93% { text-shadow: none; }
+}
+
+/* Gradient shimmer on contact heading */
+@keyframes shimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Scanline sweep */
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}

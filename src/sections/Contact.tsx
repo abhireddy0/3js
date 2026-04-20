@@ -32,14 +32,19 @@ export default function Contact() {
     <section
       ref={ref}
       id="contact"
-      className="relative py-32 md:py-48 px-6 md:px-10 max-w-7xl mx-auto"
+      className="relative py-32 md:py-48 px-6 md:px-10 max-w-7xl mx-auto overflow-hidden"
     >
+      {/* ghost background */}
+      <span className="pointer-events-none select-none absolute -right-4 bottom-24 font-display font-bold text-[22vw] leading-none text-fg/[0.022] uppercase tracking-tighter">
+        HIRE
+      </span>
+
       <h2
         data-reveal
-        className="font-display font-bold text-5xl md:text-8xl lg:text-9xl leading-[0.95] tracking-tight mb-10"
+        className="font-display font-bold text-5xl md:text-8xl lg:text-[9rem] leading-[0.92] tracking-tight mb-10"
       >
         Let's build{' '}
-        <span className="bg-gradient-to-r from-cyan-neon to-magenta-neon bg-clip-text text-transparent">
+        <span className="bg-gradient-to-r from-cyan-neon via-magenta-neon to-cyan-neon bg-clip-text text-transparent bg-[length:200%] animate-[shimmer_3s_linear_infinite]">
           something
         </span>
         <br />
@@ -104,7 +109,7 @@ export default function Contact() {
       </div>
 
       <footer className="mt-32 pt-8 border-t border-white/10 flex flex-wrap justify-between items-center gap-4 font-mono text-xs text-fg/40">
-        <span>© 2026 Abhishek Reddy. Built with React + Three.js + GSAP.</span>
+        <span>© 2026 Abhishek Reddy. Built with React + GSAP + Tailwind.</span>
         <span>Bangalore, IN</span>
       </footer>
     </section>

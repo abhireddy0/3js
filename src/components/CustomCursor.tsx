@@ -16,12 +16,12 @@ export default function CustomCursor() {
     const onMove = (e: MouseEvent) => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
-      gsap.to(dot, { x: e.clientX, y: e.clientY, duration: 0.1, ease: 'power3.out' });
+      gsap.to(dot, { x: e.clientX, y: e.clientY, duration: 0.04, ease: 'none' });
     };
 
     const tick = () => {
-      ringPos.x += (mouse.x - ringPos.x) * 0.42;
-      ringPos.y += (mouse.y - ringPos.y) * 0.42;
+      ringPos.x += (mouse.x - ringPos.x) * 0.72;
+      ringPos.y += (mouse.y - ringPos.y) * 0.72;
       ring.style.transform = `translate(${ringPos.x}px, ${ringPos.y}px) translate(-50%, -50%) scale(${ring.dataset.scale ?? 1})`;
       requestAnimationFrame(tick);
     };

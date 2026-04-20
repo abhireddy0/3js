@@ -1,34 +1,25 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useReveal } from '../lib/useReveal';
+import { ArrowRight } from 'lucide-react';
 
-function Photo({
-  src,
-  alt,
-  className,
-}: {
-  src: string;
-  alt: string;
-  className?: string;
-}) {
-  return (
-    <div className={`relative rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-cyan-neon/20 via-magenta-neon/10 to-bg ${className}`}>
-      <span className="absolute inset-0 flex items-center justify-center font-display font-bold text-[5rem] text-fg/10 select-none pointer-events-none">
-        AR
-      </span>
-      <img
-        src={src}
-        alt={alt}
-        className="absolute inset-0 w-full h-full object-cover object-top"
-        onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = '0'; }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-bg/40 via-transparent to-transparent pointer-events-none" />
-    </div>
-  );
-}
+const PHOTOS = [
+  { src: '/Abhishek Reddy.jpeg', alt: 'Abhishek Reddy', position: 'center top' },
+  { src: '/TechFest -bangalore.jpeg', alt: 'Tech Fest Bangalore', position: 'center center' },
+];
 
 export default function About() {
   const ref = useRef<HTMLElement>(null);
+  const [current, setCurrent] = useState(0);
+  const [loaded, setLoaded] = useState<boolean[]>(PHOTOS.map(() => false));
   useReveal(ref);
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrent((prev) => (prev + 1) % PHOTOS.length), 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const markLoaded = (i: number) =>
+    setLoaded((prev) => { const n = [...prev]; n[i] = true; return n; });
 
   return (
     <section
@@ -38,31 +29,51 @@ export default function About() {
     >
       <div className="grid md:grid-cols-[1fr_1.2fr] gap-12 md:gap-20 items-start">
 
-        {/* photo stack */}
-        <div data-reveal className="relative pb-24 md:pb-32">
-          {/* glow layers */}
-          <div className="absolute -top-6 -left-6 w-36 h-36 rounded-full bg-cyan-neon/25 blur-3xl pointer-events-none" />
-          <div className="absolute bottom-8 -right-4 w-36 h-36 rounded-full bg-magenta-neon/25 blur-3xl pointer-events-none" />
+        {/* photo slideshow */}
+        <div data-reveal className="relative">
+          <div className="absolute -top-6 -left-6 w-40 h-40 rounded-full bg-cyan-neon/20 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-6 -right-4 w-40 h-40 rounded-full bg-magenta-neon/20 blur-3xl pointer-events-none" />
 
-          {/* main portrait */}
-          <Photo
-            src="/Abhishek Reddy.jpeg"
-            alt="Abhishek Reddy"
-            className="relative aspect-[3/4] w-full -rotate-[3deg] shadow-[0_8px_40px_rgba(0,229,255,0.15)] border-white/15"
-          />
+          <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden border border-white/12 bg-gradient-to-br from-white/[0.04] to-transparent shadow-[0_8px_40px_rgba(0,0,0,0.5)]">
+            {PHOTOS.map((photo, i) => (
+              <img
+                key={photo.src}
+                src={photo.src}
+                alt={photo.alt}
+                onLoad={() => markLoaded(i)}
+                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+                  i === current && loaded[i] ? 'opacity-100' : 'opacity-0'
+                }`}
+                style={{ objectPosition: photo.position }}
+              />
+            ))}
 
-          {/* second portrait — overlapping bottom-right */}
-          <div className="absolute bottom-0 right-0 w-[55%] rotate-[5deg] shadow-[0_8px_32px_rgba(255,46,196,0.25)] border border-magenta-neon/40 rounded-2xl overflow-hidden">
-            <Photo
-              src="/TechFest -bangalore.jpeg"
-              alt="Abhishek Reddy"
-              className="aspect-[3/4] w-full border-0"
-            />
+            {!loaded[current] && (
+              <span className="absolute inset-0 flex items-center justify-center font-display font-bold text-[5rem] text-fg/10 select-none">
+                AR
+              </span>
+            )}
+
+            <div className="absolute inset-0 bg-gradient-to-t from-bg/50 via-transparent to-transparent pointer-events-none" />
+
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+              {PHOTOS.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrent(i)}
+                  className={`rounded-full transition-all duration-300 ${
+                    i === current ? 'w-4 h-1.5 bg-cyan-neon' : 'w-1.5 h-1.5 bg-white/30 hover:bg-white/50'
+                  }`}
+                  aria-label={`Photo ${i + 1}`}
+                />
+              ))}
+            </div>
           </div>
 
-          {/* name tag */}
-          <div className="absolute bottom-2 left-4 font-mono text-xs text-fg/50">
-            Abhishek Reddy <span className="text-cyan-neon">·</span> 2026
+          <div className="mt-3 font-mono text-xs text-fg/40 flex items-center justify-between px-1">
+            <span>Abhishek Reddy <span className="text-cyan-neon">·</span> 2026</span>
+            <span className="text-fg/25">{current + 1} / {PHOTOS.length}</span>
           </div>
         </div>
 
@@ -72,38 +83,65 @@ export default function About() {
             data-reveal
             className="font-display font-bold text-4xl md:text-6xl leading-[1.05] tracking-tight mb-8"
           >
-            I build the{' '}
+            From the field{' '}
             <span className="bg-gradient-to-r from-cyan-neon to-magenta-neon bg-clip-text text-transparent">
-              web and the wires
-            </span>{' '}
-            behind it.
+              to the terminal.
+            </span>
           </h2>
 
           <div className="space-y-5 text-fg/70 text-lg leading-relaxed max-w-xl font-body">
             <p data-reveal>
-              I'm Abhishek — a full-stack developer based in Bangalore. I spent the first chapter
-              of my career deep in the MERN stack, building review and operations tooling at{' '}
-              <span className="text-fg">Gravita Oasis Review Solutions</span>.
+              I'm Abhishek — an AI graduate from{' '}
+              <span className="text-fg">East Point College of Engineering, Bangalore</span>.
+              My journey started with a strong ambition to become a professional athlete. That drive
+              never left — it just found a new arena.
             </p>
             <p data-reveal>
-              These days I'm at{' '}
-              <span className="text-fg">SR Integrated Circuits</span>, writing typed, tested
-              services with <span className="text-cyan-neon">NestJS</span> +{' '}
-              <span className="text-cyan-neon">Prisma</span> on{' '}
-              <span className="text-cyan-neon">PostgreSQL</span>, and shipping mobile with{' '}
-              <span className="text-cyan-neon">React Native</span>.
+              Today I channel that same competitive edge into building scalable software. I'm currently
+              at <span className="text-fg">SR Integrated Circuits</span>, shipping backend systems
+              and mobile features for{' '}
+              <span className="text-cyan-neon">ComponentBuy.com</span> — one of South Asia's largest
+              platforms for ECE products.
             </p>
             <p data-reveal>
               I care about clean schemas, fast feedback loops, and interfaces that feel alive.
-              Outside the terminal I'm probably breaking something, fixing it, and calling it a
-              feature.
+              Outside the terminal I'm probably breaking something, fixing it, and calling it a feature.
             </p>
           </div>
 
+          {/* currently building callout */}
+          <div
+            data-reveal
+            className="mt-8 flex items-start gap-3 p-4 rounded-xl border border-cyan-neon/20 bg-cyan-neon/[0.04]"
+          >
+            <div className="mt-0.5 w-2 h-2 rounded-full bg-cyan-neon shrink-0 shadow-[0_0_8px_#00E5FF] animate-pulse" />
+            <div>
+              <p className="font-mono text-xs text-cyan-neon uppercase tracking-widest mb-1">
+                Currently building
+              </p>
+              <p className="font-body text-fg/80 text-sm leading-relaxed">
+                Full-stack product development with{' '}
+                <span className="text-fg">NestJS · Prisma · React Native · PostgreSQL</span>
+                {' '}at <span className="text-cyan-neon">ComponentBuy.com</span>
+              </p>
+            </div>
+          </div>
+
           <div data-reveal className="mt-10 grid grid-cols-3 gap-4 font-mono text-sm">
-            <Stat label="Experience" value="5+" suffix="months" />
+            <Stat label="Degree" value="B.Tech" suffix="AI · EPCE" />
             <Stat label="Companies" value="2" suffix="Bangalore" />
             <Stat label="Stacks" value="2" suffix="MERN · NestJS" />
+          </div>
+
+          <div data-reveal className="mt-8">
+            <a
+              href="#milestones"
+              onClick={(e) => { e.preventDefault(); document.getElementById('milestones')?.scrollIntoView({ behavior: 'smooth' }); }}
+              className="inline-flex items-center gap-2 font-mono text-sm text-fg/50 hover:text-cyan-neon transition-colors group"
+            >
+              <span>See my achievements</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </a>
           </div>
         </div>
       </div>
